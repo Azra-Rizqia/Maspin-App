@@ -2,8 +2,6 @@ const User = require('../models/userModel');
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const asyncHandler = require('express-async-handler')
-// const fs = require('fs');
-// const AWS = require('../config/aws-config');
 
 const registerUser = asyncHandler(async (req, res) => {
     const { nama, nik, noHP, email, password, confirmPassword, ktp, statusValidate } = req.body
@@ -126,91 +124,6 @@ const getUser = asyncHandler(async (req, res) => {
     })
 })
 
-// const uploadToS3 = async (filePath, key) => {
-//     const fileData = fs.readFileSync(filePath);
-
-//     const s3 = new AWS.S3(); // Membuat instance baru S3
-
-//     const params = {
-//         Bucket: process.env.CYCLIC_BUCKET_NAME,
-//         Key: key,
-//         Body: fileData,
-//         ContentType: 'image/jpeg'
-//     };
-
-//     return s3.upload(params).promise();
-// };
-
-// const validateAccount = async (req, res) => {
-//     try {
-//         const userId = req.user.id;
-//         const { nik } = req.body;
-//         const ktpFileName = req.file ? req.file.filename : null;
-
-//         if (!nik || !ktpFileName) {
-//             return res.status(400).json({
-//                 success: false,
-//                 message: 'Mohon masukkan nik dan unggah foto KTP'
-//             });
-//         }
-
-//         const existingUser = await User.findOne({ nik });
-
-//         if (existingUser) {
-//             return res.status(400).json({
-//                 success: false,
-//                 message: 'NIK sudah terdaftar'
-//             });
-//         }
-
-//         // Upload ke S3
-//         const s3Key = `ktp/${ktpFileName}`;
-//         await uploadToS3(req.file.path, s3Key);
-
-//         // Update user dengan URL S3
-//         const updatedUser = await User.findByIdAndUpdate(
-//             userId,
-//             {
-//                 nik,
-//                 ktp: `${process.env.BASE_URL}/${s3Key}`,
-//                 statusValidate: true
-//             },
-//             { new: true }
-//         );
-
-//         if (!updatedUser) {
-//             return res.status(404).json({
-//                 success: false,
-//                 message: 'Pengguna tidak ditemukan'
-//             });
-//         }
-
-//         // Hapus file lokal setelah diupload ke S3
-//         fs.unlinkSync(req.file.path);
-
-//         res.status(200).json({
-//             success: true,
-//             data: {
-//                 _id: updatedUser.id,
-//                 nama: updatedUser.nama,
-//                 nik: updatedUser.nik,
-//                 noHP: updatedUser.noHP,
-//                 email: updatedUser.email,
-//                 fotoKtp: updatedUser.ktp,
-//                 statusValidate: updatedUser.statusValidate,
-//             },
-//             message: 'Validasi akun berhasil',
-//             status: 200
-//         });
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({
-//             success: false,
-//             message: 'Internal server error'
-//         });
-//     }
-// };
-
 const validateAccount = async (req, res) => {
     let updatedUser;
 
@@ -239,7 +152,7 @@ const validateAccount = async (req, res) => {
             userId,
             {
                 nik,
-                ktp: `${process.env.NGROK_URL}/ktp/${ktpFileName}`,
+                ktp: `${process.env.BASE_URL}/ktp/${ktpFileName}`,
                 statusValidate: true
             },
             { new: true }

@@ -24,7 +24,7 @@ const createLaporan = async (req, res) => {
 
     const laporan = await Laporan.create({
       user: userId,
-      image_laporan: `${process.env.NGROK_URL}/laporan/${laporanName}`,
+      image_laporan: `${process.env.BASE_URL}/laporan/${laporanName}`,
       kategori_masalah,
       detail_masalah,
       lokasi,
@@ -57,7 +57,7 @@ const createLaporan = async (req, res) => {
 const getLaporan = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { kategori_masalah, detail_masalah, page = 1, perPage = 10 } = req.query;
+    const { kategori_masalah, detail_masalah } = req.query;
 
     const filter = { user: userId };
     if (kategori_masalah) filter.kategori_masalah = kategori_masalah;
@@ -66,11 +66,6 @@ const getLaporan = async (req, res) => {
     const totalFiles = await Laporan.countDocuments(filter);
 
     const laporanList = await Laporan.find(filter, { user: 0 })
-      .skip((page - 1) * perPage)
-      .limit(Number(perPage));
-
-    const totalPages = Math.ceil(totalFiles / perPage);
-
     if (laporanList.length > 0) {
       res.status(200).json({
         success: true,
@@ -171,7 +166,7 @@ const updateLaporan = async (req, res) => {
     const laporan = await Laporan.findByIdAndUpdate(
       laporanId,
       {
-        image_laporan: `${process.env.NGROK_URL}/laporan/${laporanName}`,
+        image_laporan: `${process.env.BASE_URL}/laporan/${laporanName}`,
         kategori_masalah,
         detail_masalah,
         lokasi,
