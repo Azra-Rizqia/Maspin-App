@@ -20,8 +20,7 @@ const storage = (tipeUpload) => multer.diskStorage({
     cb(null, uploadPath);
   },
   filename: (req, file, cb) => {
-    const originalname = file.originalname.toLowerCase().split(' ').join('_');
-    cb(null, originalname);
+    cb(null, 'image_' + Date.now() + path.extname(file.originalname));
   },
 });
 
